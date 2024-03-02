@@ -1,63 +1,65 @@
-import pandas
+// 231RDB282 Mārtiņš Rihards Zuments 2
+import java.util.Scanner;
+import java.io.FileReader;
+import java.io.IOException;
 
-fails = pandas.read_excel("data.xlsx", sheet_name = "Sheet1")
-lists = fails.values.tolist()
-listsCount = len(lists)
-i = 0
-filtered_data = []
-sex = input("Female or Male or All - ")
-country = input("France, Great Britain. United States or All - ")
-age = int(input("Age greater then 21-58 - "))
+public class Main {
 
-if sex == "All" and country == "All":
-    for i in range(listsCount):
-        if lists[i][5] > age:
-            filtered_data.append(lists[i])
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("input file name:");
+        String fileName = sc.nextLine();
+        sc.close();
 
-if sex == "Female" and country == "All":
-    for i in range(listsCount):
-        if lists[i][5] > age and lists[i][3] == "Female":
-            filtered_data.append(lists[i])
+        // Read the file
+        try {
+            FileReader fileReader = new FileReader(fileName);
+            Scanner fileScanner = new Scanner(fileReader);
 
-if sex == "Male" and country == "All":
-    for i in range(listsCount):
-        if lists[i][5] > age and lists[i][3] == "Male":
-            filtered_data.append(lists[i])
+            System.out.println("result:");
 
-if sex == "Female" and country == "France":
-    for i in range(listsCount):
-        if lists[i][5] > age and lists[i][3] == "Female" and list[i][4] == "France":
-            filtered_data.append(lists[i])
+            // Read each line of the file
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+                String[] parts = line.split(" "); // Assuming data is separated by space
 
-if sex == "Female" and country == "Great Britain":
-    for i in range(listsCount):
-        if lists[i][5] > age and lists[i][3] == "Female" and list[i][4] == "Great Britain":
-            filtered_data.append(lists[i])
-    
-if sex == "Female" and country == "United States":
-    for i in range(listsCount):
-        if lists[i][5] > age and lists[i][3] == "Female" and list[i][4] == "United States":
-            filtered_data.append(lists[i])
+                // Extract student information
+                String name = parts[0];
+                String surname = parts[1];
+                double averageGrade = calculateAverageGrade(parts);
 
-if sex == "Male" and country == "France":
-    for i in range(listsCount):
-        if lists[i][5] > age and lists[i][3] == "Male" and list[i][4] == "France":
-            filtered_data.append(lists[i])
+                // Check if average grade is less than or equal to 5
+                if (averageGrade <= 5) {
+                    int below4Count = countGradesBelow4(parts);
+                    System.out.println(name + " " + surname + " " + below4Count);
+                }
+            }
 
-if sex == "Male" and country == "Great Britain":
-    for i in range(listsCount):
-        if lists[i][5] > age and lists[i][3] == "Male" and list[i][4] == "Great Britain":
-            filtered_data.append(lists[i])
-    
-if sex == "Male" and country == "United States":
-    for i in range(listsCount):
-        if lists[i][5] > age and lists[i][3] == "Male" and list[i][4] == "United States":
-            filtered_data.append(lists[i])
+            fileScanner.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred while reading the file.");
+            e.printStackTrace();
+        }
+    }
 
-filtered_df = pandas.DataFrame(filtered_data, columns=fails.columns)
-filtered_df.to_excel("filtered_data.xlsx", index = False)
+    // Method to calculate average grade
+    private static double calculateAverageGrade(String[] parts) {
+        double sum = 0;
+        for (int i = 2; i < parts.length; i++) {
+            sum += Integer.parseInt(parts[i]);
+        }
+        return sum / (parts.length - 2);
+    }
 
-
-
-
-
+    // Method to count grades below 4
+    private static int countGradesBelow4(String[] parts) {
+        int count = 0;
+        for (int i = 2; i < parts.length; i++) {
+            int grade = Integer.parseInt(parts[i]);
+            if (grade < 4) {
+                count++;
+            }
+        }
+        return count;
+    }
+}
